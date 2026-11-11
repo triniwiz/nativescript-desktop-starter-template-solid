@@ -1,14 +1,11 @@
 import { defineConfig, mergeConfig } from 'vite';
 import { solidConfig } from '@nativescript/vite/solid';
 import { protect, restore } from './postcss-masonkit.mjs';
-import { masonkitSingleInstance } from './masonkit-hmr.mjs';
-import { escapedSelectorCommas } from './postcss-selector-commas.mjs';
 import { nativescriptSolid } from './solid-workarounds.mjs';
-import { stableActivityChunk } from './android-workarounds.mjs';
 
 export default defineConfig(({ mode }) =>
   mergeConfig(solidConfig({ mode }), {
-    plugins: [...nativescriptSolid(), masonkitSingleInstance(), stableActivityChunk()],
+    plugins: [...nativescriptSolid()],
     optimizeDeps: {
       exclude: [
         // Served as is, so nativescriptSolid() can patch its renderer.
@@ -25,9 +22,8 @@ export default defineConfig(({ mode }) =>
     css: {
       postcss: {
         // Lets Tailwind layout utilities (flex, grid, gap, max-w, ...) reach
-        // MasonKit views instead of being stripped for core layouts, and keeps
-        // classes with commas in them, like `grid-cols-[repeat(...,...)]`.
-        plugins: [protect(), restore(), escapedSelectorCommas()],
+        // MasonKit views instead of being stripped for core layouts.
+        plugins: [protect(), restore()],
       },
     },
   }),
